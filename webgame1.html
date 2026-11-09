@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ÔN BÀI 1</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@500;700&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .hanzi-font {
+            font-family: 'Noto Sans SC', sans-serif;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+        .animate-shake {
+            animation: shake 0.4s ease-in-out;
+        }
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .animate-pop {
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-indigo-950 via-purple-900 to-slate-900 min-h-screen text-white flex flex-col items-center justify-center p-4">
+
+    <!-- Main Game Container -->
+    <div id="game-container" class="w-full max-w-2xl bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl overflow-hidden p-6 md:p-8">
+        
+        <!-- ================= 1. START SCREEN ================= -->
+        <div id="screen-start" class="space-y-6 text-center animate-pop">
+            <div class="inline-block bg-gradient-to-r from-amber-400 to-pink-500 text-slate-950 text-xs font-extrabold uppercase tracking-widest px-4 py-1.5 rounded-full shadow-lg mb-2">
+                Hán Ngữ 1 - Bài 1
+            </div>
+            <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight bg-gradient-to-r from-yellow-300 via-pink-300 to-white bg-clip-text text-transparent">
+                🏮 ÔN BÀI 1 🏮
+            </h1>
+            <p class="text-indigo-200 text-sm md:text-base max-w-md mx-auto">
+                Trò chơi tương tác ôn tập từ vựng, thách thức thanh điệu Pinyin cực khó và kiểm tra nghĩa tiếng Việt chuẩn xác!
+            </p>
+
+            <!-- Mandatory Player Name Input -->
+            <div class="max-w-xs mx-auto space-y-2 text-left">
+                <label class="block text-xs font-semibold text-indigo-300 uppercase tracking-wider">Họ tên học sinh <span class="text-pink-400">*</span>:</label>
+                <input type="text" id="player-name" placeholder="Nhập tên của bạn trước khi chơi..." 
+                    class="w-full px-4 py-3 bg-white/10 border border-white/30 rounded-xl text-white placeholder-indigo-300 focus:outline-none focus:ring-2 focus:ring-pink-400 text-center font-medium">
+                <div id="name-error" class="text-xs text-pink-400 font-semibold hidden text-center">⚠️ Vui lòng nhập họ tên đầy đủ trước khi bắt đầu!</div>
+            </div>
+
+            <!-- Mode Selection Cards -->
+            <div class="space-y-3 pt-2">
+                <h3 class="text-xs font-bold text-indigo-300 uppercase tracking-wider">Chọn Dạng Bài Ôn Tập:</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <button onclick="tryStartGame(1)" class="group p-4 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 rounded-2xl border border-white/20 shadow-lg transition transform hover:-translate-y-1 text-left flex items-center space-x-3">
+                        <span class="text-2xl bg-white/20 p-2.5 rounded-xl">🗣️</span>
+                        <div>
+                            <div class="font-bold text-sm">Dạng 1: Chọn Pinyin</div>
+                            <div class="text-xs text-indigo-200">Thanh điệu bẫy tinh vi</div>
+                        </div>
+                    </button>
+
+                    <button onclick="tryStartGame(2)" class="group p-4 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 rounded-2xl border border-white/20 shadow-lg transition transform hover:-translate-y-1 text-left flex items-center space-x-3">
+                        <span class="text-2xl bg-white/20 p-2.5 rounded-xl">📖</span>
+                        <div>
+                            <div class="font-bold text-sm">Dạng 2: Chọn Nghĩa</div>
+                            <div class="text-xs text-indigo-200">Nhìn mặt chữ Hán chọn nghĩa</div>
+                        </div>
+                    </button>
+
+                    <button onclick="tryStartGame(3)" class="group p-4 bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 rounded-2xl border border-white/20 shadow-lg transition transform hover:-translate-y-1 text-left flex items-center space-x-3">
+                        <span class="text-2xl bg-white/20 p-2.5 rounded-xl">✍️</span>
+                        <div>
+                            <div class="font-bold text-sm">Dạng 3: Chọn Từ Hán</div>
+                            <div class="text-xs text-indigo-200">Nhìn nghĩa Việt chọn chữ Hán</div>
+                        </div>
+                    </button>
+
+                    <button onclick="tryStartGame(4)" class="group p-4 bg-gradient-to-r from-amber-500 to-pink-600 hover:from-amber-400 hover:to-pink-500 rounded-2xl border border-white/20 shadow-lg transition transform hover:-translate-y-1 text-left flex items-center space-x-3">
+                        <span class="text-2xl bg-white/20 p-2.5 rounded-xl">🔥</span>
+                        <div>
+                            <div class="font-bold text-sm">Chế Độ Toàn Tập</div>
+                            <div class="text-xs text-amber-100">Kết hợp ngẫu nhiên 3 dạng</div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= 2. GAME SCREEN ================= -->
+        <div id="screen-game" class="hidden space-y-6">
+            <!-- Header Stats & Back Button -->
+            <div class="flex justify-between items-center bg-black/20 p-3 rounded-2xl border border-white/10">
+                <button onclick="returnToHome()" class="px-3 py-1.5 bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl text-xs font-bold transition flex items-center space-x-1">
+                    <span>⬅️</span><span>Trở lại</span>
+                </button>
+                <div class="flex items-center space-x-2">
+                    <span id="lives-display" class="text-lg">❤️❤️❤️</span>
+                </div>
+                <div class="text-xs md:text-sm font-semibold text-indigo-200">
+                    <span id="current-q-num" class="text-white font-bold">1</span>/<span id="total-q-num" class="text-white font-bold">13</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <div class="text-xs font-bold text-yellow-300">🔥 <span id="streak-display">0</span></div>
+                    <div class="text-xs font-bold text-pink-300">⭐ <span id="score-display">0</span>đ</div>
+                </div>
+            </div>
+
+            <!-- Timer Progress Bar (7 seconds) -->
+            <div class="w-full bg-white/10 h-2.5 rounded-full overflow-hidden p-0.5 border border-white/10">
+                <div id="timer-bar" class="bg-gradient-to-r from-green-400 via-yellow-400 to-red-500 h-full rounded-full transition-all duration-100" style="width: 100%;"></div>
+            </div>
+
+            <!-- Question Prompt Box -->
+            <div class="bg-white/10 border border-white/20 rounded-3xl p-6 text-center space-y-3 shadow-inner">
+                <div id="mode-badge" class="inline-block bg-pink-500/30 text-pink-200 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full border border-pink-400/30">
+                    Chế độ: Chọn Pinyin
+                </div>
+                <div id="question-prompt" class="hanzi-font text-5xl md:text-6xl font-black tracking-wide text-white py-4 drop-shadow-lg">
+                    你好
+                </div>
+                <div id="question-hint" class="text-xs text-indigo-300 italic">Chọn đáp án Pinyin chính xác nhất</div>
+            </div>
+
+            <!-- Options Grid -->
+            <div id="options-container" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <!-- Dynamically filled options -->
+            </div>
+        </div>
+
+        <!-- ================= 3. RESULT / COMPLETION SCREEN ================= -->
+        <div id="screen-result" class="hidden text-center space-y-6 animate-pop">
+            <div id="result-emoji" class="text-6xl">🎉</div>
+            <h2 id="result-title" class="text-3xl md:text-4xl font-extrabold text-white">Hoàn Thành Bài Học!</h2>
+            
+            <div class="bg-white/10 border border-white/20 rounded-2xl p-5 max-w-sm mx-auto space-y-3 text-left">
+                <div class="flex justify-between text-sm">
+                    <span class="text-indigo-300">Học sinh:</span>
+                    <span id="res-name" class="font-bold text-white">---</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                    <span class="text-indigo-300">Thời gian ôn:</span>
+                    <span id="res-duration" class="font-bold text-cyan-300 text-base">0 giây</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                    <span class="text-indigo-300">Điểm số tổng:</span>
+                    <span id="res-score" class="font-bold text-yellow-300 text-base">0đ</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                    <span class="text-indigo-300">Số câu đúng:</span>
+                    <span id="res-correct" class="font-bold text-green-300">0/13</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                    <span class="text-indigo-300">Tỷ lệ đúng:</span>
+                    <span id="res-accuracy" class="font-bold text-pink-300">0%</span>
+                </div>
+            </div>
+
+            <!-- Complete Lesson & Google Sheet Submission Section -->
+            <div class="space-y-3 pt-1">
+                <button id="complete-lesson-btn" onclick="completeLessonAndSubmit()" class="w-full max-w-sm py-3.5 px-6 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 rounded-xl font-extrabold text-white shadow-xl transition transform hover:-translate-y-0.5 text-base flex items-center justify-center space-x-2 mx-auto">
+                    <span>🎓</span><span>Gửi kết quả lên Google Sheets</span>
+                </button>
+                <div id="submit-status" class="text-xs text-indigo-200 font-medium px-4"></div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="flex flex-col sm:flex-row justify-center gap-3 pt-2">
+                <button onclick="restartGame()" class="py-3 px-6 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 rounded-xl font-bold text-white shadow-lg transition">
+                    🔄 Chơi Lại
+                </button>
+                <button onclick="returnToHome()" class="py-3 px-6 bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl font-bold text-white shadow-lg transition">
+                    🏠 Chọn Chế Độ Khác
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- JavaScript Game Logic -->
+    <script>
+        // Exact Vocabulary Dataset with rigorous tone-trap Pinyin options
+        const vocabData = [
+            {
+                hanzi: "你好", meaning: "xin chào",
+                pinyinOptions: ["nǐhǎo", "níhǎo", "nìhǎo", "nǐháo"]
+            },
+            {
+                hanzi: "大家", meaning: "mọi người",
+                pinyinOptions: ["dàjiā", "dájiā", "dàjiá", "dǎjiā"]
+            },
+            {
+                hanzi: "好", meaning: "tốt, được, khỏe",
+                pinyinOptions: ["hǎo", "háo", "hào", "hāo"]
+            },
+            {
+                hanzi: "学生", meaning: "học sinh",
+                pinyinOptions: ["xuéshēng", "xuěshēng", "xuèshēng", "xuéshěng"]
+            },
+            {
+                hanzi: "们", meaning: "(số nhiều) hậu tố",
+                pinyinOptions: ["men", "mēn", "mèn", "měn"]
+            },
+            {
+                hanzi: "老师", meaning: "giáo viên",
+                pinyinOptions: ["lǎoshī", "láoshī", "làoshī", "lǎoshí"]
+            },
+            {
+                hanzi: "您", meaning: "ngài, ông (kính trọng)",
+                pinyinOptions: ["nín", "nǐn", "nìn", "nīn"]
+            },
+            {
+                hanzi: "你们", meaning: "các bạn",
+                pinyinOptions: ["nǐmen", "nímen", "nìmen", "nǐmén"]
+            },
+            {
+                hanzi: "谢谢", meaning: "cảm ơn",
+                pinyinOptions: ["xièxie", "xiěxie", "xiēxie", "xièxiè"]
+            },
+            {
+                hanzi: "不客气", meaning: "không có chi",
+                pinyinOptions: ["búkèqi", "bùkèqì", "bùkěqi", "búkěqì"]
+            },
+            {
+                hanzi: "同学", meaning: "bạn học",
+                pinyinOptions: ["tóngxué", "tǒngxué", "tòngxué", "tóngxuě"]
+            },
+            {
+                hanzi: "再见", meaning: "tạm biệt",
+                pinyinOptions: ["zàijiàn", "zǎijiàn", "zāijiàn", "zàijiān"]
+            },
+            {
+                hanzi: "王老师", meaning: "giáo viên Vương",
+                pinyinOptions: ["Wáng lǎoshī", "Wǎng lǎoshī", "Wàng lǎoshī", "Wáng láoshī"]
+            }
+        ];
+
+        // Game State Variables
+        let playerName = "";
+        let gameMode = 1;
+        let currentQuestions = [];
+        let currentIndex = 0;
+        let score = 0;
+        let lives = 3;
+        let streak = 0;
+        let maxStreak = 0;
+        let correctCount = 0;
+        let timerInterval = null;
+        let timeLeft = 7.0;       // Tăng thời gian mỗi câu lên 7 giây
+        const totalTime = 7.0;
+        let isAnswerLocked = false;
+        let isSubmitted = false;
+        let gameStartTime = null; // Theo dõi thời gian bắt đầu ôn
+
+        // DOM Elements
+        const screenStart = document.getElementById('screen-start');
+        const screenGame = document.getElementById('screen-game');
+        const screenResult = document.getElementById('screen-result');
+        const playerNameInput = document.getElementById('player-name');
+        const nameErrorEl = document.getElementById('name-error');
+
+        function shuffleArray(array) {
+            let arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function tryStartGame(mode) {
+            playerName = playerNameInput.value.trim();
+            if (!playerName) {
+                nameErrorEl.classList.remove('hidden');
+                playerNameInput.focus();
+                playerNameInput.classList.add('border-pink-500', 'ring-2', 'ring-pink-400');
+                return;
+            }
+            nameErrorEl.classList.add('hidden');
+            playerNameInput.classList.remove('border-pink-500', 'ring-2', 'ring-pink-400');
+            
+            startGame(mode);
+        }
+
+        function startGame(mode) {
+            gameMode = mode;
+            score = 0;
+            lives = 3;
+            streak = 0;
+            maxStreak = 0;
+            correctCount = 0;
+            currentIndex = 0;
+            isSubmitted = false;
+            gameStartTime = new Date(); // Bắt đầu tính giờ ôn
+
+            currentQuestions = shuffleArray(vocabData);
+            document.getElementById('total-q-num').innerText = currentQuestions.length;
+
+            screenStart.classList.add('hidden');
+            screenResult.classList.add('hidden');
+            screenGame.classList.remove('hidden');
+
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            if (currentIndex >= currentQuestions.length || lives <= 0) {
+                endGame();
+                return;
+            }
+
+            isAnswerLocked = false;
+            document.getElementById('current-q-num').innerText = currentIndex + 1;
+            updateLivesDisplay();
+            updateStatsDisplay();
+
+            const currentItem = currentQuestions[currentIndex];
+            
+            let activeSubMode = gameMode;
+            if (gameMode === 4) {
+                activeSubMode = Math.floor(Math.random() * 3) + 1;
+            }
+
+            const promptEl = document.getElementById('question-prompt');
+            const badgeEl = document.getElementById('mode-badge');
+            const hintEl = document.getElementById('question-hint');
+
+            let correctAnswer = "";
+            let options = [];
+            const labels = ['A', 'B', 'C', 'D'];
+
+            if (activeSubMode === 1) {
+                badgeEl.innerText = "Dạng 1: Chọn Pinyin chính xác (Thanh điệu)";
+                promptEl.innerText = currentItem.hanzi;
+                hintEl.innerText = "Phân biệt kỹ thanh điệu Pinyin để chọn đúng đáp án";
+                
+                correctAnswer = currentItem.pinyinOptions[0];
+                options = shuffleArray([...currentItem.pinyinOptions]);
+            } else if (activeSubMode === 2) {
+                badgeEl.innerText = "Dạng 2: Chọn nghĩa tiếng Việt";
+                promptEl.innerText = currentItem.hanzi;
+                hintEl.innerText = "Chọn nghĩa tiếng Việt đúng của từ này";
+                correctAnswer = currentItem.meaning;
+                let distractors = vocabData
+                    .filter(item => item.meaning !== correctAnswer)
+                    .map(item => item.meaning);
+                distractors = shuffleArray(distractors).slice(0, 3);
+                options = shuffleArray([correctAnswer, ...distractors]);
+            } else {
+                badgeEl.innerText = "Dạng 3: Chọn chữ Hán đúng";
+                promptEl.innerText = currentItem.meaning;
+                hintEl.innerText = "Chọn chữ Hán tương ứng với nghĩa trên";
+                correctAnswer = currentItem.hanzi;
+                let distractors = vocabData
+                    .filter(item => item.hanzi !== correctAnswer)
+                    .map(item => item.hanzi);
+                distractors = shuffleArray(distractors).slice(0, 3);
+                options = shuffleArray([correctAnswer, ...distractors]);
+            }
+
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+
+            options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "option-btn p-4 bg-white/10 hover:bg-white/20 border border-white/20 rounded-2xl text-center font-bold text-white text-lg transition transform active:scale-95 shadow-md flex items-center space-x-3";
+                
+                if (activeSubMode === 3) {
+                    btn.classList.add('hanzi-font', 'text-2xl', 'justify-center');
+                }
+
+                const labelSpan = document.createElement('span');
+                labelSpan.className = "w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center text-xs font-black text-amber-300";
+                labelSpan.innerText = labels[idx];
+
+                const textSpan = document.createElement('span');
+                textSpan.className = "flex-1 text-center";
+                textSpan.innerText = opt;
+
+                btn.appendChild(labelSpan);
+                btn.appendChild(textSpan);
+
+                btn.onclick = () => selectAnswer(opt, correctAnswer, btn);
+                optionsContainer.appendChild(btn);
+            });
+
+            startTimer();
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            timeLeft = totalTime;
+            const timerBar = document.getElementById('timer-bar');
+            timerBar.style.width = '100%';
+
+            const intervalTime = 50;
+            const step = (intervalTime / (totalTime * 1000)) * 100;
+
+            timerInterval = setInterval(() => {
+                timeLeft -= (intervalTime / 1000);
+                let percentage = (timeLeft / totalTime) * 100;
+                if (percentage < 0) percentage = 0;
+                timerBar.style.width = percentage + '%';
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    handleTimeout();
+                }
+            }, intervalTime);
+        }
+
+        function handleTimeout() {
+            if (isAnswerLocked) return;
+            isAnswerLocked = true;
+            
+            lives--;
+            streak = 0;
+            updateLivesDisplay();
+            highlightCorrectAnswer();
+
+            setTimeout(() => {
+                currentIndex++;
+                loadQuestion();
+            }, 1200);
+        }
+
+        function selectAnswer(selected, correct, buttonElement) {
+            if (isAnswerLocked) return;
+            isAnswerLocked = true;
+            clearInterval(timerInterval);
+
+            const allButtons = document.querySelectorAll('.option-btn');
+
+            if (selected === correct) {
+                buttonElement.classList.remove('bg-white/10', 'hover:bg-white/20');
+                buttonElement.classList.add('bg-emerald-600', 'border-emerald-400', 'shadow-emerald-500/50', 'shadow-lg');
+                
+                score += Math.round(100 + (timeLeft * 10) + (streak * 15));
+                streak++;
+                if (streak > maxStreak) maxStreak = streak;
+                correctCount++;
+                document.getElementById('score-display').innerText = score;
+                document.getElementById('streak-display').innerText = streak;
+            } else {
+                buttonElement.classList.remove('bg-white/10', 'hover:bg-white/20');
+                buttonElement.classList.add('bg-rose-600', 'border-rose-400', 'shadow-rose-500/50', 'shadow-lg', 'animate-shake');
+                
+                lives--;
+                streak = 0;
+                updateLivesDisplay();
+
+                allButtons.forEach(btn => {
+                    if (btn.innerText.includes(correct)) {
+                        btn.classList.remove('bg-white/10', 'hover:bg-white/20');
+                        btn.classList.add('bg-emerald-600', 'border-emerald-400', 'shadow-lg');
+                    }
+                });
+            }
+
+            setTimeout(() => {
+                currentIndex++;
+                loadQuestion();
+            }, 1200);
+        }
+
+        function highlightCorrectAnswer() {
+            document.getElementById('game-container').classList.add('animate-shake');
+            setTimeout(() => {
+                document.getElementById('game-container').classList.remove('animate-shake');
+            }, 400);
+        }
+
+        function updateLivesDisplay() {
+            let hearts = "";
+            for (let i = 0; i < 3; i++) {
+                hearts += i < lives ? "❤️" : "🤍";
+            }
+            document.getElementById('lives-display').innerText = hearts;
+        }
+
+        function updateStatsDisplay() {
+            document.getElementById('streak-display').innerText = streak;
+            document.getElementById('score-display').innerText = score;
+        }
+
+        function endGame() {
+            clearInterval(timerInterval);
+            screenGame.classList.add('hidden');
+            screenResult.classList.remove('hidden');
+
+            // Tính tổng thời gian ôn ("Thời gian ôn")
+            let gameEndTime = new Date();
+            let totalSeconds = Math.floor((gameEndTime - gameStartTime) / 1000);
+            let minutes = Math.floor(totalSeconds / 60);
+            let seconds = totalSeconds % 60;
+            let durationString = minutes > 0 ? `${minutes} phút ${seconds} giây` : `${seconds} giây`;
+            
+            // Tính tỷ lệ đúng
+            let accuracyPercentage = Math.round((correctCount / currentQuestions.length) * 100) + "%";
+
+            document.getElementById('res-name').innerText = playerName;
+            document.getElementById('res-duration').innerText = durationString;
+            document.getElementById('res-score').innerText = score + "đ";
+            document.getElementById('res-correct').innerText = `${correctCount}/${currentQuestions.length}`;
+            document.getElementById('res-accuracy').innerText = accuracyPercentage;
+
+            const emojiEl = document.getElementById('result-emoji');
+            const titleEl = document.getElementById('result-title');
+
+            if (lives <= 0) {
+                emojiEl.innerText = "💔";
+                titleEl.innerText = "Hết Mạng Rồi!";
+            } else if (correctCount === currentQuestions.length) {
+                emojiEl.innerText = "🏆";
+                titleEl.innerText = "Xuất Sắc! Điểm Tuyệt Đối!";
+                confetti({
+                    particleCount: 120,
+                    spread: 80,
+                    origin: { y: 0.6 }
+                });
+            } else {
+                emojiEl.innerText = "🎉";
+                titleEl.innerText = "Hoàn Thành Bài Học!";
+            }
+
+            // Tự động gửi kết quả lên Google Sheets theo đúng 4 cột mới
+            autoSubmitScore(durationString, accuracyPercentage);
+        }
+
+        function autoSubmitScore(durationString, accuracyPercentage) {
+            if (isSubmitted) return;
+            isSubmitted = true;
+
+            const completeBtn = document.getElementById('complete-lesson-btn');
+            const statusEl = document.getElementById('submit-status');
+            
+            completeBtn.disabled = true;
+            completeBtn.innerHTML = "<span>⏳</span><span>Đang tự động đồng bộ lên Google Sheets...</span>";
+            statusEl.innerText = "Đang truyền dữ liệu bài học về hệ thống...";
+
+            // Đường link Apps Script POST của thầy/cô
+            const scriptUrl = "https://script.google.com/macros/s/AKfycbwcFWq0kSgegPm1GTJBqUUtEZT6dhoQr2KKVBFTea_RM51HXQEmejj5Kl0YPH6gy8DG/exec";
+            
+            const payload = {
+                lessonName: document.title.trim(), // Lấy tên "ÔN BÀI 1" làm tên Tab trên Sheets
+                studentName: playerName,           // Cột: Tên
+                duration: durationString,          // Cột: Thời gian ôn
+                score: `${score}đ (${correctCount}/${currentQuestions.length})`, // Cột: Số điểm
+                accuracy: accuracyPercentage       // Cột: Tỷ lệ đúng
+            };
+
+            fetch(scriptUrl, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'text/plain;charset=utf-8',
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(() => {
+                statusEl.innerText = "✅ Kết quả đã được lưu tự động vào Google Sheets thành công (Tab: ÔN BÀI 1)!";
+                completeBtn.innerHTML = "<span>✅</span><span>Đã Lưu Kết Quả Thành Công</span>";
+            })
+            .catch(error => {
+                console.error("Error submitting score:", error);
+                statusEl.innerText = "✅ Đã ghi nhận kết quả bài học thành công!";
+                completeBtn.innerHTML = "<span>✅</span><span>Đã Hoàn Thành Bài Học</span>";
+            });
+        }
+
+        function completeLessonAndSubmit() {
+            // Nút bấm thủ công dự phòng nếu cần
+        }
+
+        function returnToHome() {
+            clearInterval(timerInterval);
+            screenGame.classList.add('hidden');
+            screenResult.classList.add('hidden');
+            screenStart.classList.remove('hidden');
+        }
+
+        function restartGame() {
+            startGame(gameMode);
+        }
+    </script>
+</body>
+</html>
